@@ -11,9 +11,9 @@ namespace SecureNotepad.WPF
     /// </summary>
     public partial class PasswordPrompt : Window
     {
-        public string Password { get { return PasswordBox.Password; } }
+        public string Password { get; private set; }
         private string _messageText;
-        private bool _newPassword;
+        private bool _isNewPassword;
         private bool _passwordMatchError;
 
         public PasswordPrompt()
@@ -22,10 +22,11 @@ namespace SecureNotepad.WPF
 
         }
 
-        public PasswordPrompt(string messageText, bool newPassword) : this()
+        public PasswordPrompt(string messageText, bool isNewPassword)
+            : this()
         {
             _messageText = messageText;
-            _newPassword = newPassword;
+            _isNewPassword = isNewPassword;
         }
 
         private void PasswordBox_KeyUp(object sender, KeyEventArgs e)
@@ -40,7 +41,7 @@ namespace SecureNotepad.WPF
                 return;
             }
 
-            if (_newPassword && !PasswordBox.Password.Equals(PasswordConfirmBox.Password))
+            if (_isNewPassword && !PasswordBox.Password.Equals(PasswordConfirmBox.Password))
             {
                 _passwordMatchError = true;
                 //RegisterPaswordBox(true);
@@ -49,12 +50,14 @@ namespace SecureNotepad.WPF
                 return;
             }
 
+            Password = PasswordBox.Password;
+
             Close();
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            if (!_newPassword)
+            if (!_isNewPassword)
             {
                 PasswordConfirmPanel.Visibility = System.Windows.Visibility.Collapsed;
             }
@@ -64,24 +67,24 @@ namespace SecureNotepad.WPF
                 MessageText.Visibility = System.Windows.Visibility.Visible;
             else
                 MessageText.Visibility = System.Windows.Visibility.Collapsed;
-            
-            PasswordBox.Focus();
 
+            PasswordBox.Focus();
             RegisterPaswordBox();
+                        
         }
-  
-        private void RegisterPaswordBox(bool unreg = false)
+
+        private void RegisterPaswordBox()
         {
-            if (!unreg)
-            {
-                PasswordBox.KeyUp += PasswordBox_KeyUp;
-                PasswordConfirmBox.KeyUp += PasswordBox_KeyUp;
-            }
-            else
-            {
-                PasswordBox.KeyUp -= PasswordBox_KeyUp;
-                PasswordConfirmBox.KeyUp -= PasswordBox_KeyUp;
-            }
+            PasswordBox.KeyDown += PasswordBox_KeyUp;
+            PasswordConfirmBox.KeyDown += PasswordBox_KeyUp;
+
+            
+        }
+
+        private void Window_KeyUp(object sender, KeyEventArgs e)
+        {
+            e.Handled = true;
+            
         }
     }
 }

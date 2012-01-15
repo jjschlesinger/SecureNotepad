@@ -60,6 +60,12 @@
     <Compile Include="MainViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SecureNotepad.Core\SecureNotepad.Core.csproj">
+      <Project>{B26D05D7-ED80-4E82-9F4B-A4D8A9E9C7E0}</Project>
+      <Name>SecureNotepad.Core</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

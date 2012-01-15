@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
+using SecureNotepad.Core;
 using SecureNotepad.Core.FileManagers;
 
 namespace SecureNotepad.WPF
@@ -119,11 +120,17 @@ namespace SecureNotepad.WPF
                         rsaPath = User.Default.RSAKeyPath;
 
                     var kt = (KeyType)User.Default.KeyType;
-                    if(kt == KeyType.Password)
+                    if (kt == KeyType.Password)
+                    {
                         password = GetPassword("Enter password used to encrypt the file");
-                    else if(kt == KeyType.KeyFile)
-                        password = GetPassword("Enter password used to protect key file (leave blank for unencrypted key)");
-
+                        while(password == null)
+                            password = GetPassword("Enter password used to encrypt the file");
+                    }
+                    else if (kt == KeyType.KeyFile)
+                    {
+                        while (password == null)
+                            password = GetPassword("Enter password used to protect key file (leave blank for unencrypted key)");
+                    }
 
                     _fileMgr = new SecureTextFileManager(kt, User.Default.AESKeyPath, useContainer, rsaPath, password, User.Default.PasswordSalt);
                 }
@@ -161,7 +168,14 @@ namespace SecureNotepad.WPF
 
                     _fileMgr.FilePath = dlg.FileName;
 
-                    _fileMgr.SaveFile(NoteBody.Text);
+                    try
+                    {
+                        _fileMgr.SaveFile(NoteBody.Text);
+                    }
+                    catch
+                    {
+                        MessageBox.Show("Unable to encrypt this text file. Verify your key/password is correct.");
+                    }
                     return;
                 }
 

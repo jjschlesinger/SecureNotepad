@@ -44,8 +44,13 @@ namespace SecureNotepad.Core.FileManagers
         public void SaveFile(string contents)
         {
             var b = Encoding.UTF8.GetBytes(contents);
-            var k = GetKeyBytes();
-            File.WriteAllBytes(FilePath, b.Encrypt(k));
+            
+            byte[] k;
+            k = GetKeyBytes();
+            
+            byte[] encData;
+            encData = b.Encrypt(k);
+            File.WriteAllBytes(FilePath, encData);
         }
 
         private byte[] GetKeyBytes()
@@ -64,7 +69,7 @@ namespace SecureNotepad.Core.FileManagers
                         //if password is set, decrypt key using password
                         k = k.Decrypt(_password.GetKeyFromPassphrase(32, saltBytes));
                     }
-                        
+
                     break;
                 case KeyType.RsaEncryptedKeyFile:
                     k = File.ReadAllBytes(_aesKeyPath);
