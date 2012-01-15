@@ -1,19 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.IO;
 using System.Linq;
-using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
-using System.IO;
-using CryptoExtensions;
+using SecureNotepad.Core.CryptoExtensions;
+using SecureNotepad.Core.FileManagers;
 
-namespace SecureNotepad
+namespace SecureNotepad.WPF
 {
     /// <summary>
     /// Interaction logic for Settings.xaml
@@ -98,7 +91,7 @@ namespace SecureNotepad
                 {
                     case KeyType.KeyFile:
                         k = RNGExtensions.GetRandomBytes(32);
-                        var pwd = GetPassword();
+                        var pwd = GetPassword("Enter password to protect key file (leave blank for unencrypted key)");
                         if (!String.IsNullOrEmpty(pwd))
                             k = k.Encrypt(pwd.GetKeyFromPassphrase(32, saltBytes));
 
@@ -131,9 +124,9 @@ namespace SecureNotepad
             Close();
         }
 
-        private string GetPassword()
+        private string GetPassword(string messageText = null)
         {
-            var dlg = new PasswordPrompt();
+            var dlg = new PasswordPrompt(messageText);
             dlg.ShowDialog();
             return dlg.Password;
         }
@@ -189,6 +182,21 @@ namespace SecureNotepad
                 return;
 
             RSAKeyPath.Text = dlg.FileName;
+        }
+
+        private void RSAKeyExport_Click(object sender, RoutedEventArgs e)
+        {
+            var dlg = new Microsoft.Win32.SaveFileDialog();
+            dlg.CheckFileExists = false;
+            dlg.OverwritePrompt = true;
+
+            var result = dlg.ShowDialog();
+            if (!result.HasValue || result.Value == false)
+                return;
+
+            File.WriteAllText(dlg.FileName, RSAKeyContainer.Text.ExportRSAKeyAsXml());
+
+            MessageBox.Show("RSA Public/Private key export complete!");
         }
 
 

@@ -1,19 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using System.IO;
+using SecureNotepad.Core.FileManagers;
 
-namespace SecureNotepad
+namespace SecureNotepad.WPF
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -73,6 +64,7 @@ namespace SecureNotepad
                 }
                 catch
                 {
+                    
                     MessageBox.Show("Unable to decrypt this text file. Verify your key/password is correct.");
                 }
 
@@ -124,10 +116,12 @@ namespace SecureNotepad
                         rsaPath = User.Default.RSAKeyPath;
 
                     var kt = (KeyType)User.Default.KeyType;
-                    if(kt != KeyType.RsaEncryptedKeyFile)
-                        password = GetPassword();
+                    if(kt == KeyType.Password)
+                        password = GetPassword("Enter password used to encrypt the file");
+                    else if(kt == KeyType.KeyFile)
+                        password = GetPassword("Enter password used to protect key file (leave blank for unencrypted key)");
 
-                    _fileMgr = new SecureTextFileManager(kt, User.Default.AESKeyPath, useContainer, rsaPath, password);
+                    _fileMgr = new SecureTextFileManager(kt, User.Default.AESKeyPath, useContainer, rsaPath, password, User.Default.PasswordSalt);
                 }
                 else
                     _fileMgr = new PlainTextFileManager();
@@ -135,9 +129,9 @@ namespace SecureNotepad
 
         }
 
-        private string GetPassword()
+        private string GetPassword(string messageText)
         {
-            var dlg = new PasswordPrompt();
+            var dlg = new PasswordPrompt(messageText);
             dlg.ShowDialog();
             return dlg.Password;
         }

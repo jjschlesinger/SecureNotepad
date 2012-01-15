@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
-namespace SecureNotepad
+namespace SecureNotepad.Core.FileManagers
 {
-    interface IFileManager
+    public interface IFileManager
     {
         string FilePath { get; set; }
         string OpenFile();

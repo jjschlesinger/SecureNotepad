@@ -1,11 +1,11 @@
-﻿<Window x:Class="SecureNotepad.SettingsPage"
+﻿<Window x:Class="SecureNotepad.WPF.SettingsPage"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Settings" Height="300" Width="421" OverridesDefaultStyle="False" ResizeMode="NoResize" ShowActivated="True" ShowInTaskbar="False" WindowStartupLocation="CenterScreen" WindowStyle="ToolWindow">
+        Title="Settings" Height="196" Width="425" OverridesDefaultStyle="False" ResizeMode="NoResize" ShowActivated="True" ShowInTaskbar="False" WindowStartupLocation="CenterScreen" WindowStyle="ToolWindow">
     <StackPanel>
         <RadioButton Content="Password" Height="16" Name="UsePassKey" GroupName="EncryptionType" Checked="EncryptionType_Checked" IsChecked="True" Margin="5,5,5,0" />
         <RadioButton Content="Key File" Height="16" Name="UseFileKey" GroupName="EncryptionType" Checked="EncryptionType_Checked" Margin="5,5,5,0" />
-        <RadioButton Content="RSA Encrypted Key" Height="16" Name="UseRSAKey" GroupName="EncryptionType" Checked="EncryptionType_Checked" Margin="5" />
+        <RadioButton Content="RSA Encrypted Key" Height="16" Name="UseRSAKey" GroupName="EncryptionType" Checked="EncryptionType_Checked" Margin="5" Visibility="Collapsed" />
         <GroupBox Header="AES Key" Name="AESKeyBox" Width="387" IsEnabled="False">
             <StackPanel>
                 <StackPanel Orientation="Horizontal" Height="25" Margin="0,5,0,0">
@@ -19,7 +19,13 @@
             </StackPanel>
             
         </GroupBox>
-        <GroupBox Header="RSA Key" Name="RSAKeyBox" Width="387" IsEnabled="False">
+        <Button Width="64" Height="53" Click="Button_Click">
+            <StackPanel>
+                <Image Stretch="None" Source="/SecureNotepad;component/Images/saveHS.png" />
+                <TextBlock>Save</TextBlock>
+            </StackPanel>
+        </Button>
+        <GroupBox Header="RSA Key" Name="RSAKeyBox" Width="387" IsEnabled="False" Visibility="Collapsed">
             <StackPanel>
                 <StackPanel Name="RSAKeyPathPanel" Orientation="Horizontal" Height="25" Margin="0,5,0,0">
                     <RadioButton Height="16" Name="RSAKeyPathRadio" Margin="0,0,5,0" GroupName="RSAKeyGroup" Checked="RSAKeyStore_Checked" />
@@ -33,14 +39,11 @@
                     <RadioButton Height="16" Name="RSAKeyContainerRadio" Margin="0,0,5,0" GroupName="RSAKeyGroup" IsChecked="True" Checked="RSAKeyStore_Checked" IsEnabled="True" />
                     <TextBlock Width="60">Container:</TextBlock>
                     <TextBox Name="RSAKeyContainer" Width="265" VerticalAlignment="Top" Margin="5,0,0,0"></TextBox>
+                    <Button Name="RSAKeyExport" Height="24" Width="24" Click="RSAKeyExport_Click" ToolTip="Export Keys">
+                        <Image Stretch="Uniform" Source="/SecureNotepad;component/Images/Move.png" />
+                    </Button>
                 </StackPanel>
             </StackPanel>
         </GroupBox>
-        <Button Width="64" Height="53" Click="Button_Click">
-            <StackPanel>
-                <Image Stretch="None" Source="/SecureNotepad;component/Images/saveHS.png"/>
-                <TextBlock>Save</TextBlock>
-            </StackPanel>
-        </Button>
     </StackPanel>
 </Window>

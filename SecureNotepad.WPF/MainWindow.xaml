@@ -1,4 +1,4 @@
-﻿<Window x:Class="SecureNotepad.MainWindow"
+﻿<Window x:Class="SecureNotepad.WPF.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="SecureNotepad" Height="350" Width="525" Closing="Window_Closing" WindowStartupLocation="CenterScreen" UseLayoutRounding="True">

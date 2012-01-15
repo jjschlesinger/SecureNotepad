@@ -1,18 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Security.Cryptography;
 using System.IO;
+using System.Linq;
+using System.Security.Cryptography;
 
-namespace CryptoExtensions
+namespace SecureNotepad.Core.CryptoExtensions
 {
-    public enum CryptoType
-    {
-        Encrypt,
-        Decrypt
-    }
-
     public static class AESExtensions
     {
 

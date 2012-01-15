@@ -1,7 +1,7 @@
 ﻿
-namespace SecureNotepad
+namespace SecureNotepad.Core.FileManagers
 {
-    enum KeyType : byte
+    public enum KeyType : byte
     {
         Password = 0,
         KeyFile = 1,

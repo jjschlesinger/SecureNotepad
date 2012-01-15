@@ -1,50 +1,46 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
-using CryptoExtensions;
-using System.IO;
+using SecureNotepad.Core.CryptoExtensions;
 
-namespace SecureNotepad
+namespace SecureNotepad.Core.FileManagers
 {
 
-    class SecureTextFileManager : IFileManager
+    public class SecureTextFileManager : IFileManager
     {
-        private KeyType _keyType;
-        private string _aesKeyPath;
-        private string _rsaContainerPath;
-        private string _password;
-        private bool _useRsaContainer;
+        private readonly KeyType _keyType;
+        private readonly string _aesKeyPath;
+        private readonly string _rsaContainerPath;
+        private readonly string _password;
+        private readonly bool _useRsaContainer;
+        private readonly string _passwordSalt;
 
         public SecureTextFileManager()
         {
         }
 
 
-        public SecureTextFileManager(KeyType keyType, string aesKeyPath, bool useRsaContainer, string rsaContainerPath, string password)
+        public SecureTextFileManager(KeyType keyType, string aesKeyPath, bool useRsaContainer, string rsaContainerPath, string password, string passwordSalt)
         {
             _keyType = keyType;
             _password = password;
             _rsaContainerPath = rsaContainerPath;
             _useRsaContainer = useRsaContainer;
             _aesKeyPath = aesKeyPath;
+            _passwordSalt = passwordSalt;
         }
 
-        public string FilePath
-        {
-            get;
-            set;
-        }
+        public string FilePath { get; set; }
 
         public string OpenFile()
         {
             var b = File.ReadAllBytes(FilePath);
             var k = GetKeyBytes();
-
             return Encoding.UTF8.GetString(b.Decrypt(k));
         }
 
-        
+
         public void SaveFile(string contents)
         {
             var b = Encoding.UTF8.GetBytes(contents);
@@ -55,7 +51,7 @@ namespace SecureNotepad
         private byte[] GetKeyBytes()
         {
             byte[] k = null;
-            var saltBytes = Convert.FromBase64String(User.Default.PasswordSalt);
+            var saltBytes = Convert.FromBase64String(_passwordSalt);
             switch (_keyType)
             {
                 case KeyType.Password:
@@ -68,6 +64,7 @@ namespace SecureNotepad
                         //if password is set, decrypt key using password
                         k = k.Decrypt(_password.GetKeyFromPassphrase(32, saltBytes));
                     }
+                        
                     break;
                 case KeyType.RsaEncryptedKeyFile:
                     k = File.ReadAllBytes(_aesKeyPath);

@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Security.Cryptography;
 using System.IO;
+using System.Linq;
+using System.Security.Cryptography;
 
-namespace CryptoExtensions
+namespace SecureNotepad.Core.CryptoExtensions
 {
     public static class RSAExtensions
     {
@@ -59,6 +57,16 @@ namespace CryptoExtensions
         public static string ExportRSAKeyAsXml()
         {
             using (var rsa = new RSACryptoServiceProvider())
+            {
+                return rsa.ToXmlString(true);
+            }
+        }
+
+        public static string ExportRSAKeyAsXml(this string containerName)
+        {
+            var csp = new CspParameters();
+            csp.KeyContainerName = containerName;
+            using (var rsa = new RSACryptoServiceProvider(csp))
             {
                 return rsa.ToXmlString(true);
             }
