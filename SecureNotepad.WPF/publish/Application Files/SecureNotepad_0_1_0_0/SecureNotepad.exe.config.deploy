@@ -2,34 +2,10 @@
 <configuration>
     <configSections>
         <sectionGroup name="userSettings" type="System.Configuration.UserSettingsGroup, System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" >
-            <section name="SecureNotepad.WPF.User" type="System.Configuration.ClientSettingsSection, System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" allowExeDefinition="MachineToLocalUser" requirePermission="false" />
             <section name="SecureNotepad.User" type="System.Configuration.ClientSettingsSection, System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" allowExeDefinition="MachineToLocalUser" requirePermission="false" />
         </sectionGroup>
     </configSections>
     <userSettings>
-        <SecureNotepad.WPF.User>
-            <setting name="KeyType" serializeAs="String">
-                <value>0</value>
-            </setting>
-            <setting name="AESKeyPath" serializeAs="String">
-                <value />
-            </setting>
-            <setting name="RSAKeyPath" serializeAs="String">
-                <value />
-            </setting>
-            <setting name="RSAKeyContainer" serializeAs="String">
-                <value />
-            </setting>
-            <setting name="RSAStore" serializeAs="String">
-                <value />
-            </setting>
-            <setting name="FirstLaunch" serializeAs="String">
-                <value>True</value>
-            </setting>
-            <setting name="PasswordSalt" serializeAs="String">
-                <value>c2+PD5PtlaIxZjQsRyGoQg==</value>
-            </setting>
-        </SecureNotepad.WPF.User>
         <SecureNotepad.User>
             <setting name="KeyType" serializeAs="String">
                 <value>0</value>

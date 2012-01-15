@@ -116,8 +116,8 @@ namespace SecureNotepad.WPF
             User.Default.AESKeyPath = AESKeyPath.Text;
             User.Default.RSAKeyContainer = RSAKeyContainer.Text;
             User.Default.RSAKeyPath = RSAKeyPath.Text;
-            User.Default.PasswordSalt = Convert.ToBase64String(saltBytes);
             User.Default.FirstLaunch = false;
+            User.Default.PasswordSalt = Convert.ToBase64String(saltBytes);
             User.Default.Save();
 
 
@@ -126,7 +126,7 @@ namespace SecureNotepad.WPF
 
         private string GetPassword(string messageText = null)
         {
-            var dlg = new PasswordPrompt(messageText);
+            var dlg = new PasswordPrompt(messageText, true);
             dlg.ShowDialog();
             return dlg.Password;
         }
@@ -197,6 +197,11 @@ namespace SecureNotepad.WPF
             File.WriteAllText(dlg.FileName, RSAKeyContainer.Text.ExportRSAKeyAsXml());
 
             MessageBox.Show("RSA Public/Private key export complete!");
+        }
+
+        private void RegenSalt_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBox.Show(User.Default.PasswordSalt);
         }
 
 

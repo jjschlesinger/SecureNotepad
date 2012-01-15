@@ -23,6 +23,9 @@ namespace SecureNotepad.WPF
 
         void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
+            //var saltBytes = Core.CryptoExtensions.RNGExtensions.GetRandomBytes(16);
+            //MessageBox.Show(Convert.ToBase64String(saltBytes));
+
             if(User.Default.FirstLaunch)
             {
                 var settings = new SettingsPage();
@@ -121,6 +124,7 @@ namespace SecureNotepad.WPF
                     else if(kt == KeyType.KeyFile)
                         password = GetPassword("Enter password used to protect key file (leave blank for unencrypted key)");
 
+
                     _fileMgr = new SecureTextFileManager(kt, User.Default.AESKeyPath, useContainer, rsaPath, password, User.Default.PasswordSalt);
                 }
                 else
@@ -131,7 +135,7 @@ namespace SecureNotepad.WPF
 
         private string GetPassword(string messageText)
         {
-            var dlg = new PasswordPrompt(messageText);
+            var dlg = new PasswordPrompt(messageText, false);
             dlg.ShowDialog();
             return dlg.Password;
         }

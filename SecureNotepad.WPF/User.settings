@@ -1,5 +1,5 @@
 ﻿<?xml version='1.0' encoding='utf-8'?>
-<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="SecureNotepad" GeneratedClassName="User">
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="SecureNotepad.WPF" GeneratedClassName="User">
   <Profiles />
   <Settings>
     <Setting Name="KeyType" Type="System.Byte" Scope="User">
@@ -17,11 +17,11 @@
     <Setting Name="RSAStore" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="PasswordSalt" Type="System.String" Scope="User">
-      <Value Profile="(Default)" />
-    </Setting>
     <Setting Name="FirstLaunch" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="PasswordSalt" Type="System.String" Scope="User">
+      <Value Profile="(Default)">c2+PD5PtlaIxZjQsRyGoQg==</Value>
     </Setting>
   </Settings>
 </SettingsFile>

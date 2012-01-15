@@ -1,11 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using GalaSoft.MvvmLight;
 
 namespace SecureNotepad.WPF.ViewModels
 {
-    public class MainViewModel
+    public class MainViewModel : ViewModelBase
     {
+
     }
 }

@@ -85,18 +85,6 @@ namespace SecureNotepad.WPF {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string PasswordSalt {
-            get {
-                return ((string)(this["PasswordSalt"]));
-            }
-            set {
-                this["PasswordSalt"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool FirstLaunch {
             get {
@@ -104,6 +92,18 @@ namespace SecureNotepad.WPF {
             }
             set {
                 this["FirstLaunch"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("c2+PD5PtlaIxZjQsRyGoQg==")]
+        public string PasswordSalt {
+            get {
+                return ((string)(this["PasswordSalt"]));
+            }
+            set {
+                this["PasswordSalt"] = value;
             }
         }
     }

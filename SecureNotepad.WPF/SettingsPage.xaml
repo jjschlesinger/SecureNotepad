@@ -15,16 +15,10 @@
                         <Image Stretch="Uniform" Source="/SecureNotepad;component/Images/openHS.png" />
                     </Button>
                 </StackPanel>
-                
+
             </StackPanel>
-            
+
         </GroupBox>
-        <Button Width="64" Height="53" Click="Button_Click">
-            <StackPanel>
-                <Image Stretch="None" Source="/SecureNotepad;component/Images/saveHS.png" />
-                <TextBlock>Save</TextBlock>
-            </StackPanel>
-        </Button>
         <GroupBox Header="RSA Key" Name="RSAKeyBox" Width="387" IsEnabled="False" Visibility="Collapsed">
             <StackPanel>
                 <StackPanel Name="RSAKeyPathPanel" Orientation="Horizontal" Height="25" Margin="0,5,0,0">
@@ -45,5 +39,24 @@
                 </StackPanel>
             </StackPanel>
         </GroupBox>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="126*" />
+                <ColumnDefinition Width="64" />
+                <ColumnDefinition Width="141*" />
+            </Grid.ColumnDefinitions>
+            <Button Width="64" Height="53" Click="Button_Click" Grid.Column="1" Margin="0">
+                <StackPanel>
+                    <Image Stretch="None" Source="/SecureNotepad;component/Images/saveHS.png" />
+                    <TextBlock>Save</TextBlock>
+                </StackPanel>
+            </Button>
+            <Button Name="RegenSalt" Width="120" Height="53" Click="RegenSalt_Click" Grid.Column="2" Margin="0" HorizontalAlignment="Right">
+                <StackPanel>
+                    <Image Stretch="None" Source="/SecureNotepad;component/Images/Key_Left.png" />
+                    <TextBlock>Generate New Salt</TextBlock>
+                </StackPanel>
+            </Button>
+        </Grid>
     </StackPanel>
 </Window>
