@@ -15,6 +15,8 @@ namespace SecureNotepad.WPF.ViewModels
 
         public bool IsDirty { get; set; }
 
+        
+
         /// <summary>
         /// Sets and gets the FileContents property.
         /// Changes to that property's value raise the PropertyChanged event. 
@@ -68,12 +70,19 @@ namespace SecureNotepad.WPF.ViewModels
         public RelayCommand OpenCommand { get; private set; }
         public RelayCommand SaveCommand { get; private set; }
         public RelayCommand CloseCommand { get; private set; }
+        public RelayCommand SettingsCommand { get; private set; }
 
         public MainViewModel()
         {
             OpenCommand = new RelayCommand(() => SendOpenFileMessage());
             SaveCommand = new RelayCommand(() => SendSaveFileMessage());
             CloseCommand = new RelayCommand(() => SendCloseFileMessage());
+            SettingsCommand = new RelayCommand(() => SendSettingsMessage());
+        }
+
+        private void SendSettingsMessage()
+        {
+            MessengerInstance.Send<bool>(true, "ShowSettings");
         }
 
         private void SendCloseFileMessage()

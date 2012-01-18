@@ -19,7 +19,7 @@
                 <Button Name="Save" BorderThickness="0" ToolTip="Save (Ctrl + S)" Command="{Binding Path=SaveCommand}">
                     <Image Width="32" Height="32" Stretch="Fill" Source="/SecureNotepad;component/Images/base_floppydisk_32.png" />
                 </Button>
-                <Button Name="Settings" Click="Settings_Click" BorderThickness="0" ToolTip="Settings">
+                <Button Name="Settings" BorderThickness="0" ToolTip="Settings" Command="{Binding Path=SettingsCommand}">
                     <Image Width="32" Height="32" Stretch="Fill" Source="/SecureNotepad;component/Images/Gear.png" />
                 </Button>
             </ToolBar>

@@ -43,8 +43,7 @@ namespace SecureNotepad.WPF
             Messenger.Default.Register<DialogResult>(this, "SaveFile", dlg => ShowFileDialog(new SaveFileDialog(), dlg));
             Messenger.Default.Register<DialogResult>(this, "GetPassword", dlg => ShowPasswordDialog(dlg));
             Messenger.Default.Register<Boolean>(this, "ConfirmSave", b => ConfirmClose());
-
-           
+            Messenger.Default.Register<Boolean>(this, "ShowSettings", b => ShowSettingsDialog());
 
             ProcessCLI();
         }
@@ -138,15 +137,16 @@ namespace SecureNotepad.WPF
             return true;
         }
 
-        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
-        {
-            e.Cancel = !ConfirmClose();
-        }
-
-        private void Settings_Click(object sender, RoutedEventArgs e)
+        private void ShowSettingsDialog()
         {
             var settings = new SettingsPage();
             settings.ShowDialog();
+        }
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            if(_main.IsDirty)
+                e.Cancel = !ConfirmClose();
         }
 
         private void SaveCommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
