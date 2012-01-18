@@ -1,8 +1,9 @@
 ﻿<Application x:Class="SecureNotepad.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:SecureNotepad.WPF.ViewModels;assembly=SecureNotepad.WPF.ViewModels"
              StartupUri="MainWindow.xaml" Startup="Application_Startup">
     <Application.Resources>
-         
+        <vm:Locator x:Key="Locator" />
     </Application.Resources>
 </Application>

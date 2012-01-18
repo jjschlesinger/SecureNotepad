@@ -42,6 +42,12 @@ namespace SecureNotepad.WPF.ViewModels
             }
 
             SimpleIoc.Default.Register<MainViewModel>();
+            SimpleIoc.Default.Register<SettingsViewModel>();
+        }
+
+        public static T GetViewModel<T>() where T : ViewModelBase
+        {
+            return ServiceLocator.Current.GetInstance<T>();
         }
 
         /// <summary>
@@ -55,6 +61,20 @@ namespace SecureNotepad.WPF.ViewModels
             get
             {
                 return ServiceLocator.Current.GetInstance<MainViewModel>();
+            }
+        }
+
+        /// <summary>
+        /// Gets the Settings property.
+        /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance",
+            "CA1822:MarkMembersAsStatic",
+            Justification = "This non-static member is needed for data binding purposes.")]
+        public SettingsViewModel Settings
+        {
+            get
+            {
+                return ServiceLocator.Current.GetInstance<SettingsViewModel>();
             }
         }
     }

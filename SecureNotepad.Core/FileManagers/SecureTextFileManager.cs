@@ -33,13 +33,24 @@ namespace SecureNotepad.Core.FileManagers
 
         public string FilePath { get; set; }
 
+        public string FileContents { get;set; }
+
+        public void LoadFile()
+        {
+            FileContents = OpenFile();
+        }
+
+        public void SaveFile()
+        {
+            SaveFile(FileContents);
+        }
+
         public string OpenFile()
         {
             var b = File.ReadAllBytes(FilePath);
             var k = GetKeyBytes();
             return Encoding.UTF8.GetString(b.Decrypt(k));
         }
-
 
         public void SaveFile(string contents)
         {

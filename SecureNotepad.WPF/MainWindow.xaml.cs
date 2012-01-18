@@ -1,9 +1,13 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
-using SecureNotepad.Core;
+using GalaSoft.MvvmLight.Messaging;
+using Microsoft.Win32;
 using SecureNotepad.Core.FileManagers;
+using SecureNotepad.Core.UI;
+using SecureNotepad.WPF.ViewModels;
 
 namespace SecureNotepad.WPF
 {
@@ -13,7 +17,7 @@ namespace SecureNotepad.WPF
     public partial class MainWindow : Window
     {
         private const string _filter = "Secure text file|*.stf;|Plain text files|*.txt";
-        private IFileManager _fileMgr;
+        private MainViewModel _main;
 
         public MainWindow()
         {
@@ -24,30 +28,48 @@ namespace SecureNotepad.WPF
 
         void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            //var saltBytes = Core.CryptoExtensions.RNGExtensions.GetRandomBytes(16);
-            //MessageBox.Show(Convert.ToBase64String(saltBytes));
+            _main = (MainViewModel)DataContext;
+            _main.UserSettings = new UserSettings();
+            Locator.GetViewModel<SettingsViewModel>().UserSettings = _main.UserSettings;
 
-            if(User.Default.FirstLaunch)
+            if (_main.UserSettings.FirstLaunch)
             {
                 var settings = new SettingsPage();
                 settings.ShowDialog();
                 return;
             }
 
+            Messenger.Default.Register<DialogResult>(this, "OpenFile", dlg => ShowFileDialog(new OpenFileDialog(), dlg));
+            Messenger.Default.Register<DialogResult>(this, "SaveFile", dlg => ShowFileDialog(new SaveFileDialog(), dlg));
+            Messenger.Default.Register<DialogResult>(this, "GetPassword", dlg => ShowPasswordDialog(dlg));
+            Messenger.Default.Register<Boolean>(this, "ConfirmSave", b => ConfirmClose());
+
+           
+
+            ProcessCLI();
+        }
+
+        private void ProcessCLI()
+        {
             if (App.CLIArgs.Length > 0)
-                OpenFile(App.CLIArgs[0]);
+            {
+                var dr = new DialogResult
+                {
+                    FilePath = App.CLIArgs[0],
+                    DialogType = FileDialogType.Open
+                };
+
+                if (dr.FilePath.EndsWith(".stf"))
+                    dr.SelectedFileType = SecureFileType.Encrypted;
+                else
+                    dr.SelectedFileType = SecureFileType.ClearText;
+
+                _main.ProcessDialog(dr);
+            }
         }
 
-        private void Open_Click(object sender, RoutedEventArgs e)
+        private void ShowFileDialog(FileDialog dlg, DialogResult dlgResult)
         {
-            OpenFile();
-        }
-
-        private void OpenFile()
-        {
-            CloseCurrentFile();
-
-            var dlg = new Microsoft.Win32.OpenFileDialog();
             dlg.DefaultExt = ".stf";
             dlg.Filter = _filter;
 
@@ -56,185 +78,90 @@ namespace SecureNotepad.WPF
             if (result == true)
             {
                 if (dlg.FilterIndex == 1)
-                    SetFileManager(true);
+                    dlgResult.SelectedFileType = SecureFileType.Encrypted;
                 else
-                    SetFileManager(false);
+                    dlgResult.SelectedFileType = SecureFileType.ClearText;
 
-                _fileMgr.FilePath = dlg.FileName;
+                dlgResult.FilePath = dlg.FileName;
+                //dlgResult.DialogType = dlg.GetType() == typeof(OpenFileDialog) ? FileDialogType.Open : FileDialogType.Save;
 
-                try
-                {
-                    NoteBody.Text = _fileMgr.OpenFile();
-                }
-                catch
-                {
-                    
-                    MessageBox.Show("Unable to decrypt this text file. Verify your key/password is correct.");
-                }
-
-                return;
-            }
-
-            _fileMgr = null;
-        }
-
-        private void OpenFile(string path)
-        {
-            if (path.EndsWith(".stf"))
-                SetFileManager(true);
-            else
-                SetFileManager(false);
-
-            _fileMgr.FilePath = path;
-
-            try
-            {
-                NoteBody.Text = _fileMgr.OpenFile();
-            }
-            catch
-            {
-                MessageBox.Show("Unable to decrypt this text file. Verify your key/password is correct.");
+                _main.ProcessDialog(dlgResult);
             }
         }
 
-        private void Save_Click(object sender, RoutedEventArgs e)
+        private void ShowPasswordDialog(DialogResult dlgResult)
         {
-            SaveFile();
-        }
-
-        private void SetFileManager(bool isSecure)
-        {
-            if (_fileMgr == null)
+            if (_main.UserSettings.AESKeyType == KeyType.Password)
             {
-                if (isSecure)
-                {
-                    string password = null;
-                    var useContainer = false;
-                    var rsaPath = "";
-                    if (User.Default.RSAStore == "Container")
-                    {
-                        useContainer = true;
-                        rsaPath = User.Default.RSAKeyContainer;
-                    }
-                    else
-                        rsaPath = User.Default.RSAKeyPath;
-
-                    var kt = (KeyType)User.Default.KeyType;
-                    if (kt == KeyType.Password)
-                    {
-                        password = GetPassword("Enter password used to encrypt the file");
-                        while(password == null)
-                            password = GetPassword("Enter password used to encrypt the file");
-                    }
-                    else if (kt == KeyType.KeyFile)
-                    {
-                        while (password == null)
-                            password = GetPassword("Enter password used to protect key file (leave blank for unencrypted key)");
-                    }
-
-                    _fileMgr = new SecureTextFileManager(kt, User.Default.AESKeyPath, useContainer, rsaPath, password, User.Default.PasswordSalt);
-                }
+                if (dlgResult.DialogType == FileDialogType.Open)
+                    dlgResult.Password = GetPassword("Enter password used to encrypt the file");
                 else
-                    _fileMgr = new PlainTextFileManager();
+                    dlgResult.Password = GetPassword("Enter password to encrypt the file", true);
+            }
+            else if (_main.UserSettings.AESKeyType == KeyType.KeyFile)
+            {
+                dlgResult.Password = GetPassword("Enter password used to protect key file (leave blank for unencrypted key)");
             }
 
+            _main.ProcessDialog(dlgResult);
         }
 
-        private string GetPassword(string messageText)
+
+        private string GetPassword(string messageText, bool isNewPassword = false)
         {
-            var dlg = new PasswordPrompt(messageText, false);
+            var dlg = new PasswordPrompt(messageText, isNewPassword);
             dlg.ShowDialog();
             return dlg.Password;
         }
 
-        private void SaveFile()
-        {
-            if (_fileMgr != null && _fileMgr.FilePath != null)
-                _fileMgr.SaveFile(NoteBody.Text);
-            else
-            {
-                var dlg = new Microsoft.Win32.SaveFileDialog();
-                dlg.DefaultExt = ".stf";
-                dlg.Filter = _filter;
-
-                var result = dlg.ShowDialog();
-
-                if (result == true)
-                {
-                    if (dlg.FilterIndex == 1)
-                        SetFileManager(true);
-                    else
-                        SetFileManager(false);
-
-                    _fileMgr.FilePath = dlg.FileName;
-
-                    try
-                    {
-                        _fileMgr.SaveFile(NoteBody.Text);
-                    }
-                    catch
-                    {
-                        MessageBox.Show("Unable to encrypt this text file. Verify your key/password is correct.");
-                    }
-                    return;
-                }
-
-                _fileMgr = null;
-            }
-        }
-
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            CloseCurrentFile();
+            ConfirmClose();
         }
 
-        private bool CloseCurrentFile()
+        private bool ConfirmClose()
         {
-            if (!String.IsNullOrEmpty(NoteBody.Text))
+            var mbr = MessageBox.Show("Save opened file before closing?", "Confirm Save", MessageBoxButton.YesNoCancel);
+            switch (mbr)
             {
-                var mbr = MessageBox.Show("Save opened file before closing?", "Confirm Save", MessageBoxButton.YesNoCancel);
-                switch (mbr)
-                {
-                    case MessageBoxResult.Yes:
-                        SaveFile();
-                        break;
-                    case MessageBoxResult.No:
-                        break;
-                    default:
-                        return false;
-                }
+                case MessageBoxResult.Yes:
+                    _main.SaveCommand.Execute(null);
+                    break;
+                case MessageBoxResult.No:
+                    _main.IsDirty = false;
+                    _main.CloseCommand.Execute(null);
+                    break;
+                default:
+                    return false;
             }
 
-            _fileMgr = null;
-            NoteBody.Text = String.Empty;
             return true;
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            e.Cancel = !CloseCurrentFile();
+            e.Cancel = !ConfirmClose();
         }
 
         private void Settings_Click(object sender, RoutedEventArgs e)
         {
             var settings = new SettingsPage();
             settings.ShowDialog();
-
         }
 
         private void SaveCommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            SaveFile();
+            _main.SaveCommand.Execute(null);
         }
 
         private void OpenCommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            OpenFile();
+            _main.OpenCommand.Execute(null);
         }
 
         private void NewCommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            CloseCurrentFile();
+            ConfirmClose();
         }
     }
 }

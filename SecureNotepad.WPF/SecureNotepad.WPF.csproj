@@ -73,6 +73,14 @@
     <SignManifests>true</SignManifests>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="GalaSoft.MvvmLight.Extras.WPF4, Version=0.0.0.0, Culture=neutral, PublicKeyToken=1673db7d5906b0ad, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Lib\WPF\GalaSoft.MvvmLight.Extras.WPF4.dll</HintPath>
+    </Reference>
+    <Reference Include="GalaSoft.MvvmLight.WPF4, Version=0.0.0.0, Culture=neutral, PublicKeyToken=63eb5c012e0b3c1c, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Lib\WPF\GalaSoft.MvvmLight.WPF4.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
@@ -103,6 +111,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>User.settings</DependentUpon>
     </Compile>
+    <Compile Include="UserSettings.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -179,6 +188,10 @@
     <ProjectReference Include="..\SecureNotepad.Core\SecureNotepad.Core.csproj">
       <Project>{B26D05D7-ED80-4E82-9F4B-A4D8A9E9C7E0}</Project>
       <Name>SecureNotepad.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SecureNotepad.WPF.ViewModels\SecureNotepad.WPF.ViewModels.csproj">
+      <Project>{80BA2E32-E67B-4A6C-8E61-091ED212D7B6}</Project>
+      <Name>SecureNotepad.WPF.ViewModels</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

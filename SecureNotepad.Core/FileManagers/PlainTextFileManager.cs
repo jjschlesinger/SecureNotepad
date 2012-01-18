@@ -15,6 +15,18 @@ namespace SecureNotepad.Core.FileManagers
             FilePath = filePath;
         }
 
+        public string FileContents { get;set; }
+
+        public void LoadFile()
+        {
+            FileContents = OpenFile();
+        }
+
+        public void SaveFile()
+        {
+            SaveFile(FileContents);
+        }
+
         public string OpenFile(string path)
         {
             return File.ReadAllText(path);

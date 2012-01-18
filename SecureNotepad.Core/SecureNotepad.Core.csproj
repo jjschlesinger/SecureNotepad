@@ -44,11 +44,15 @@
     <Compile Include="CryptoExtensions\CryptoType.cs" />
     <Compile Include="CryptoExtensions\RNGExtensions.cs" />
     <Compile Include="CryptoExtensions\RSAExtensions.cs" />
+    <Compile Include="UI\DialogResult.cs" />
     <Compile Include="FileManagers\IFileManager.cs" />
     <Compile Include="FileManagers\KeyType.cs" />
     <Compile Include="FileManagers\PlainTextFileManager.cs" />
     <Compile Include="FileManagers\SecureTextFileManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UI\FileDialogType.cs" />
+    <Compile Include="UI\SecureFileType.cs" />
+    <Compile Include="Settings\IUserSettings.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
