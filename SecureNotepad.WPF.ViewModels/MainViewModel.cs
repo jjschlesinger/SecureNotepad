@@ -5,6 +5,7 @@ using GalaSoft.MvvmLight.Command;
 using SecureNotepad.Core.FileManagers;
 using SecureNotepad.Core.Settings;
 using SecureNotepad.Core.UI;
+using System.Text.RegularExpressions;
 
 namespace SecureNotepad.WPF.ViewModels
 {
@@ -42,6 +43,31 @@ namespace SecureNotepad.WPF.ViewModels
             }
         }
 
+        private int _positionInContents = 0;
+
+        /// <summary>
+        /// Sets and gets the PositionInContents property.
+        /// Changes to that property's value raise the PropertyChanged event. 
+        /// </summary>
+        public int PositionInContents
+        {
+            get
+            {
+                return _positionInContents;
+            }
+
+            set
+            {
+                if (_positionInContents == value)
+                {
+                    return;
+                }
+
+                _positionInContents = value;
+                RaisePropertyChanged(() => PositionInContents);
+            }
+        }
+
         private IUserSettings _userSettings;
 
         /// <summary>
@@ -71,6 +97,7 @@ namespace SecureNotepad.WPF.ViewModels
         public RelayCommand SaveCommand { get; private set; }
         public RelayCommand CloseCommand { get; private set; }
         public RelayCommand SettingsCommand { get; private set; }
+        public RelayCommand<String> FindCommand { get; private set; }
 
         public MainViewModel()
         {
@@ -78,6 +105,17 @@ namespace SecureNotepad.WPF.ViewModels
             SaveCommand = new RelayCommand(() => SendSaveFileMessage());
             CloseCommand = new RelayCommand(() => SendCloseFileMessage());
             SettingsCommand = new RelayCommand(() => SendSettingsMessage());
+            FindCommand = new RelayCommand<String>(k => FindInContents(k));
+        }
+
+        private void FindInContents(string key)
+        {
+            var regex = new Regex(key, RegexOptions.IgnoreCase);
+            var matches = regex.Matches(FileContents, PositionInContents);
+            if(matches.Count > 0)
+                MessengerInstance.Send<String>(matches[0].Value, "FoundMatch");
+            else
+                MessengerInstance.Send<String>(String.Empty, "FoundMatch");
         }
 
         private void SendSettingsMessage()

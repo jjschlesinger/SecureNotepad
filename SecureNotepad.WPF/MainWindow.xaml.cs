@@ -43,8 +43,23 @@ namespace SecureNotepad.WPF
             Messenger.Default.Register<DialogResult>(this, "GetPassword", dlg => ShowPasswordDialog(dlg));
             Messenger.Default.Register<Boolean>(this, "ConfirmSave", b => ConfirmClose());
             Messenger.Default.Register<Boolean>(this, "ShowSettings", b => ShowSettingsDialog());
+            Messenger.Default.Register<String>(this, "FoundMatch", m => ProcessMatch(m));
 
             ProcessCLI();
+        }
+
+        private void ProcessMatch(string match)
+        {
+            if (String.IsNullOrEmpty(match))
+            {
+                _main.PositionInContents = 0;
+                NoteBody.Select(0, 0);
+                MessageBox.Show("No match found");
+                return;
+            }
+            NoteBody.Focus();
+            NoteBody.Select(NoteBody.Text.IndexOf(match, _main.PositionInContents), match.Length);
+            _main.PositionInContents++;
         }
 
         private void ProcessCLI()
@@ -141,12 +156,12 @@ namespace SecureNotepad.WPF
             Locator.GetViewModel<SettingsViewModel>().UserSettings = new UserSettings();
             var settings = new SettingsPage();
             settings.ShowDialog();
-            
+
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            if(_main.IsDirty)
+            if (_main.IsDirty)
                 e.Cancel = !ConfirmClose();
         }
 
@@ -164,5 +179,11 @@ namespace SecureNotepad.WPF
         {
             ConfirmClose();
         }
+
+        private void NoteBody_SelectionChanged(object sender, RoutedEventArgs e)
+        {
+            _main.PositionInContents = NoteBody.SelectionStart;
+        }
+
     }
 }
