@@ -7,6 +7,11 @@ namespace SecureNotepad.WPF
 {
     class UserSettings : IUserSettings
     {
+        public UserSettings()
+        {
+            User.Default.Reload();
+        }
+
         public KeyType AESKeyType
         {
             get
@@ -15,7 +20,7 @@ namespace SecureNotepad.WPF
             }
             set
             {
-                User.Default.KeyType = Convert.ToByte(User.Default.KeyType);
+                User.Default.KeyType = Convert.ToByte(value);
             }
         }
 
@@ -58,6 +63,11 @@ namespace SecureNotepad.WPF
         public void Save()
         {
             User.Default.Save();
+        }
+
+        public void Reload()
+        {
+            User.Default.Reload();
         }
     }
 }

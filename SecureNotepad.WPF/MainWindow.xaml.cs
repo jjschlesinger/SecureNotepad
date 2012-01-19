@@ -30,7 +30,6 @@ namespace SecureNotepad.WPF
         {
             _main = (MainViewModel)DataContext;
             _main.UserSettings = new UserSettings();
-            Locator.GetViewModel<SettingsViewModel>().UserSettings = _main.UserSettings;
 
             if (_main.UserSettings.FirstLaunch)
             {
@@ -139,8 +138,10 @@ namespace SecureNotepad.WPF
 
         private void ShowSettingsDialog()
         {
+            Locator.GetViewModel<SettingsViewModel>().UserSettings = new UserSettings();
             var settings = new SettingsPage();
             settings.ShowDialog();
+            
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)

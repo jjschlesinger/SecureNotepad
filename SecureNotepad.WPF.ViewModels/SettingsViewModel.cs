@@ -1,17 +1,15 @@
-﻿using GalaSoft.MvvmLight;
+﻿using System;
+using System.IO;
+using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.Command;
+using GalaSoft.MvvmLight.Ioc;
+using SecureNotepad.Core.CryptoExtensions;
 using SecureNotepad.Core.Settings;
 
 namespace SecureNotepad.WPF.ViewModels
 {
     public class SettingsViewModel : ViewModelBase
     {
-        /// <summary>
-        /// Initializes a new instance of the SettingsViewModel class.
-        /// </summary>
-        public SettingsViewModel()
-        {
-        }
-
         private bool? _useFileKey;
 
         /// <summary>
@@ -33,6 +31,9 @@ namespace SecureNotepad.WPF.ViewModels
                 }
 
                 _useFileKey = value;
+                if (_userSettings != null && _useFileKey.HasValue && _useFileKey.Value)
+                    _userSettings.AESKeyType = Core.FileManagers.KeyType.KeyFile;
+
                 RaisePropertyChanged(() => UseFileKey);
             }
         }
@@ -58,16 +59,12 @@ namespace SecureNotepad.WPF.ViewModels
                 }
 
                 _usePasswordAsKey = value;
+                if (_userSettings != null && _usePasswordAsKey.HasValue && _usePasswordAsKey.Value)
+                    _userSettings.AESKeyType = Core.FileManagers.KeyType.Password;
+
                 RaisePropertyChanged(() => UsePasswordAsKey);
             }
         }
-
-        /// <summary>
-        /// The <see cref="AESKeyPath" /> property's name.
-        /// </summary>
-        public const string AESKeyPathPropertyName = "AESKeyPath";
-
-        private string _aesKeyPath;
 
         /// <summary>
         /// Sets and gets the AESKeyPath property.
@@ -77,17 +74,17 @@ namespace SecureNotepad.WPF.ViewModels
         {
             get
             {
-                return _aesKeyPath;
+                return _userSettings.AESKeyPath;
             }
 
             set
             {
-                if (_aesKeyPath == value)
+                if (_userSettings.AESKeyPath == value)
                 {
                     return;
                 }
 
-                _aesKeyPath = value;
+                _userSettings.AESKeyPath = value;
                 RaisePropertyChanged(() => AESKeyPath);
             }
         }
@@ -114,7 +111,81 @@ namespace SecureNotepad.WPF.ViewModels
 
                 _userSettings = value;
                 RaisePropertyChanged(() => UserSettings);
+                SetKeyProperties();
             }
+        }
+
+        public SettingsViewModel()
+        {
+            SaveCommand = new RelayCommand<String>(keyPass => SaveSettings(keyPass));
+        }
+
+        public RelayCommand<String> SaveCommand { get; private set; }
+
+        private void SetKeyProperties()
+        {
+            if (_userSettings == null)
+                return;
+
+            switch (_userSettings.AESKeyType)
+            {
+                case SecureNotepad.Core.FileManagers.KeyType.Password:
+                    _usePasswordAsKey = true;
+                    _useFileKey = false;
+                    break;
+                case SecureNotepad.Core.FileManagers.KeyType.KeyFile:
+                    _usePasswordAsKey = false;
+                    _useFileKey = true;
+                    break;
+            }
+        }
+
+        private void SaveSettings(string keyPass)
+        {
+            if (keyPass == null && !File.Exists(AESKeyPath))
+            {
+                MessengerInstance.Send<Boolean>(true, "GetPassword");
+                return;
+            }
+            var saltBytes = new byte[16];
+
+            if (String.IsNullOrEmpty(_userSettings.PasswordSalt))
+                saltBytes = RNGExtensions.GetRandomBytes(16);
+            else
+                saltBytes = Convert.FromBase64String(_userSettings.PasswordSalt);
+
+            if (!File.Exists(AESKeyPath))
+            {
+                var k = new byte[32];
+
+                if (UseFileKey.HasValue && UseFileKey.Value)
+                {
+                    k = RNGExtensions.GetRandomBytes(32);
+                    if (!String.IsNullOrEmpty(keyPass))
+                        k = k.Encrypt(keyPass.GetKeyFromPassphrase(32, saltBytes));
+
+                    File.WriteAllBytes(AESKeyPath, k);
+                }
+
+
+            }
+
+            _userSettings.AESKeyPath = AESKeyPath;
+            _userSettings.FirstLaunch = false;
+            _userSettings.PasswordSalt = Convert.ToBase64String(saltBytes);
+            _userSettings.Save();
+
+            MessengerInstance.Send<Boolean>(true, "SaveComplete");
+        }
+
+        public override void Cleanup()
+        {
+            _userSettings.Reload();
+            SetKeyProperties();
+            
+            base.Cleanup();
+
+            Locator.UnregisterVM<SettingsViewModel>();
         }
     }
 }

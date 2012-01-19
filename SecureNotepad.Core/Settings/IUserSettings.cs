@@ -11,5 +11,6 @@ namespace SecureNotepad.Core.Settings
         bool FirstLaunch { get; set; }
         string PasswordSalt { get; set; }
         void Save();
+        void Reload();
     }
 }

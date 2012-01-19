@@ -1,10 +1,8 @@
 ﻿using System;
-using System.IO;
 using System.Linq;
 using System.Windows;
-using System.Windows.Controls;
-using SecureNotepad.Core.CryptoExtensions;
-using SecureNotepad.Core.FileManagers;
+using GalaSoft.MvvmLight.Messaging;
+using SecureNotepad.WPF.ViewModels;
 
 namespace SecureNotepad.WPF
 {
@@ -13,149 +11,29 @@ namespace SecureNotepad.WPF
     /// </summary>
     public partial class SettingsPage : Window
     {
-        private KeyType _keyType;
+        private SettingsViewModel _vm;
         public SettingsPage()
         {
             InitializeComponent();
-            Loaded += new RoutedEventHandler(SettingsPage_Loaded);
+            Closing += new System.ComponentModel.CancelEventHandler(SettingsPage_Closing);
+            _vm = DataContext as SettingsViewModel;
+            Messenger.Default.Register<Boolean>(this, "GetPassword", b => GetPassword(b));
+            Messenger.Default.Register<Boolean>(this, "SaveComplete", b => Close());
         }
 
-        void SettingsPage_Loaded(object sender, RoutedEventArgs e)
+        void SettingsPage_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            _keyType = (KeyType)User.Default.KeyType;
-            switch (_keyType)
-            {
-                case KeyType.RsaEncryptedKeyFile:
-                    UseRSAKey.IsChecked = true;
-                    break;
-                case KeyType.KeyFile:
-                    UseFileKey.IsChecked = true;
-                    break;
-                default:
-                    UsePassKey.IsChecked = true;
-                    break;
-            }
-
-            AESKeyPath.Text = User.Default.AESKeyPath;
-            if (User.Default.RSAStore == "Container")
-                RSAKeyContainerRadio.IsChecked = true;
-            else
-                RSAKeyPathRadio.IsChecked = true;
-
-            RSAKeyContainer.Text = User.Default.RSAKeyContainer;
-            RSAKeyPath.Text = User.Default.RSAKeyPath;
+            _vm.Cleanup();
         }
 
-        private void EncryptionType_Checked(object sender, RoutedEventArgs e)
+        private void GetPassword(bool show)
         {
-            if (!IsLoaded)
+            if (!show)
                 return;
 
-            var rb = e.Source as RadioButton;
-            switch (rb.Name)
-            {
-                case "UseRSAKey":
-                    RSAKeyBox.IsEnabled = true;
-                    AESKeyBox.IsEnabled = true;
-                    User.Default.KeyType = Convert.ToByte(KeyType.RsaEncryptedKeyFile);
-                    break;
-                case "UseFileKey":
-                    RSAKeyBox.IsEnabled = false;
-                    AESKeyBox.IsEnabled = true;
-                    User.Default.KeyType = Convert.ToByte(KeyType.KeyFile);
-                    break;
-                default:
-                    RSAKeyBox.IsEnabled = false;
-                    AESKeyBox.IsEnabled = false;
-                    User.Default.KeyType = Convert.ToByte(KeyType.Password);
-                    break;
-            }
-
-            _keyType = (KeyType)User.Default.KeyType;
-        }
-
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-            var saltBytes = new byte[16];
-
-            if (String.IsNullOrEmpty(User.Default.PasswordSalt))
-                saltBytes = RNGExtensions.GetRandomBytes(16);
-            else
-                saltBytes = Convert.FromBase64String(User.Default.PasswordSalt);
-
-            if (!File.Exists(AESKeyPath.Text))
-            {
-                var k = new byte[32];
-
-                switch (_keyType)
-                {
-                    case KeyType.KeyFile:
-                        k = RNGExtensions.GetRandomBytes(32);
-                        var pwd = GetPassword("Enter password to protect key file (leave blank for unencrypted key)");
-                        if (!String.IsNullOrEmpty(pwd))
-                            k = k.Encrypt(pwd.GetKeyFromPassphrase(32, saltBytes));
-
-                        File.WriteAllBytes(AESKeyPath.Text, k);
-                        break;
-                    case KeyType.RsaEncryptedKeyFile:
-                        if (User.Default.RSAStore == "Container")
-                            k = k.Encrypt(RSAKeyContainer.Text.ExportRSAKey());
-                        else
-                        {
-                            File.WriteAllText(RSAKeyPath.Text, RSAExtensions.ExportRSAKeyAsXml());
-                            k = k.Encrypt(RSAKeyPath.Text.ExportRSAKeyFromXml());
-                        }
-
-                        File.WriteAllBytes(AESKeyPath.Text, k);
-                        break;
-                    
-                }
-
-                
-            }
-            User.Default.AESKeyPath = AESKeyPath.Text;
-            User.Default.RSAKeyContainer = RSAKeyContainer.Text;
-            User.Default.RSAKeyPath = RSAKeyPath.Text;
-            User.Default.FirstLaunch = false;
-            User.Default.PasswordSalt = Convert.ToBase64String(saltBytes);
-            User.Default.Save();
-
-
-            Close();
-        }
-
-        private string GetPassword(string messageText = null)
-        {
-            var dlg = new PasswordPrompt(messageText, true);
+            var dlg = new PasswordPrompt("Enter password to protect key file (leave blank for unencrypted key)", true);
             dlg.ShowDialog();
-            return dlg.Password;
-        }
-
-        private void RSAKeyStore_Checked(object sender, RoutedEventArgs e)
-        {
-            if (!IsLoaded)
-            {
-                RSAKeyPath.IsEnabled = false;
-                RSAKeyPathBrowse.IsEnabled = false;
-                return;
-            }
-
-            var rb = e.Source as RadioButton;
-            switch (rb.Name)
-            {
-                case "RSAKeyContainerRadio":
-                    RSAKeyContainer.IsEnabled = true;
-                    RSAKeyPath.IsEnabled = false;
-                    RSAKeyPathBrowse.IsEnabled = false;
-                    User.Default.RSAStore = "Container";
-                    break;
-                case "RSAKeyPathRadio":
-                    RSAKeyContainer.IsEnabled = false;
-                    RSAKeyPath.IsEnabled = true;
-                    RSAKeyPathBrowse.IsEnabled = true;
-                    User.Default.RSAStore = "File";
-                    break;
-            }
+            //return dlg.Password;
         }
 
         private void AESKeyPathBrowse_Click(object sender, RoutedEventArgs e)
@@ -169,34 +47,6 @@ namespace SecureNotepad.WPF
                 return;
 
             AESKeyPath.Text = dlg.FileName;
-        }
-
-        private void RSAKeyPathBrowse_Click(object sender, RoutedEventArgs e)
-        {
-            var dlg = new Microsoft.Win32.SaveFileDialog();
-            dlg.CheckFileExists = false;
-            dlg.OverwritePrompt = false;
-
-            var result = dlg.ShowDialog();
-            if (!result.HasValue || result.Value == false)
-                return;
-
-            RSAKeyPath.Text = dlg.FileName;
-        }
-
-        private void RSAKeyExport_Click(object sender, RoutedEventArgs e)
-        {
-            var dlg = new Microsoft.Win32.SaveFileDialog();
-            dlg.CheckFileExists = false;
-            dlg.OverwritePrompt = true;
-
-            var result = dlg.ShowDialog();
-            if (!result.HasValue || result.Value == false)
-                return;
-
-            File.WriteAllText(dlg.FileName, RSAKeyContainer.Text.ExportRSAKeyAsXml());
-
-            MessageBox.Show("RSA Public/Private key export complete!");
         }
 
         private void RegenSalt_Click(object sender, RoutedEventArgs e)

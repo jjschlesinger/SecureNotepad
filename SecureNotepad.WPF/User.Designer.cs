@@ -61,30 +61,6 @@ namespace SecureNotepad.WPF {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string RSAKeyContainer {
-            get {
-                return ((string)(this["RSAKeyContainer"]));
-            }
-            set {
-                this["RSAKeyContainer"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string RSAStore {
-            get {
-                return ((string)(this["RSAStore"]));
-            }
-            set {
-                this["RSAStore"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool FirstLaunch {
             get {

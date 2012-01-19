@@ -42,11 +42,13 @@ namespace SecureNotepad.WPF.ViewModels
             }
 
             SimpleIoc.Default.Register<MainViewModel>();
+            
             SimpleIoc.Default.Register<SettingsViewModel>();
         }
 
         public static T GetViewModel<T>() where T : ViewModelBase
         {
+            RegisterVM<T>();
             return ServiceLocator.Current.GetInstance<T>();
         }
 
@@ -60,6 +62,8 @@ namespace SecureNotepad.WPF.ViewModels
         {
             get
             {
+                RegisterVM<MainViewModel>();
+
                 return ServiceLocator.Current.GetInstance<MainViewModel>();
             }
         }
@@ -74,8 +78,22 @@ namespace SecureNotepad.WPF.ViewModels
         {
             get
             {
+                RegisterVM<SettingsViewModel>();
+
                 return ServiceLocator.Current.GetInstance<SettingsViewModel>();
             }
+        }
+
+        public static void RegisterVM<T>() where T : ViewModelBase
+        {
+            if (!SimpleIoc.Default.IsRegistered<T>())
+                SimpleIoc.Default.Register<T>();
+        }
+
+        public static void UnregisterVM<T>() where T : ViewModelBase
+        {
+            if (SimpleIoc.Default.IsRegistered<T>())
+                SimpleIoc.Default.Unregister<T>();
         }
     }
 }
