@@ -194,5 +194,9 @@ namespace SecureNotepad.WPF
             _main.PositionInContents = NoteBody.SelectionStart;
         }
 
+        private void FindCommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            _main.FindCommand.Execute(SearchBox.Text);
+        }
     }
 }
