@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Linq;
 using SecureNotepad.Core.FileManagers;
+using SecureNotepad.Core.Net.OAuth;
 using SecureNotepad.Core.Settings;
+using SecureNotepad.Core.Extensions;
 
 namespace SecureNotepad.WPF
 {
@@ -10,6 +12,18 @@ namespace SecureNotepad.WPF
         public UserSettings()
         {
             User.Default.Reload();
+        }
+
+        public OAuthToken Token
+        {
+            get
+            {
+                return Convert.FromBase64String(User.Default.LiveToken).DeserializeFromBytes<OAuthToken>();
+            }
+            set
+            {
+                User.Default.LiveToken = Convert.ToBase64String(value.SerializeToBytes<OAuthToken>());
+            }
         }
 
         public KeyType AESKeyType

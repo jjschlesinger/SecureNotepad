@@ -49,18 +49,6 @@ namespace SecureNotepad.WPF {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string RSAKeyPath {
-            get {
-                return ((string)(this["RSAKeyPath"]));
-            }
-            set {
-                this["RSAKeyPath"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool FirstLaunch {
             get {
@@ -80,6 +68,18 @@ namespace SecureNotepad.WPF {
             }
             set {
                 this["PasswordSalt"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string LiveToken {
+            get {
+                return ((string)(this["LiveToken"]));
+            }
+            set {
+                this["LiveToken"] = value;
             }
         }
     }

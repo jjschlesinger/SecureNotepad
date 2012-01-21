@@ -100,6 +100,12 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="BrowseSkyDrive.xaml.cs">
+      <DependentUpon>BrowseSkyDrive.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="LiveLogin.xaml.cs">
+      <DependentUpon>LiveLogin.xaml</DependentUpon>
+    </Compile>
     <Compile Include="PasswordPrompt.xaml.cs">
       <DependentUpon>PasswordPrompt.xaml</DependentUpon>
     </Compile>
@@ -112,6 +118,14 @@
       <DependentUpon>User.settings</DependentUpon>
     </Compile>
     <Compile Include="UserSettings.cs" />
+    <Page Include="BrowseSkyDrive.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="LiveLogin.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -227,6 +241,22 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\FindHH.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\mynet.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\1403_Globe.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\WebFolder.png" />
+    <Resource Include="Images\WebSave.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Folder_Closed.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Generic_Document.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

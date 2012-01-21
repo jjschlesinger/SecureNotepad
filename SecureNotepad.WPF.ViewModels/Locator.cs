@@ -1,17 +1,7 @@
-﻿/*
-  In App.xaml:
-  <Application.Resources>
-      <vm:Locator xmlns:vm="clr-namespace:SecureNotepad.WPF.ViewModels"
-                                   x:Key="Locator" />
-  </Application.Resources>
-  
-  In the View:
-  DataContext="{Binding Source={StaticResource Locator}, Path=ViewModelName}"
-*/
-
-using GalaSoft.MvvmLight;
+﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Ioc;
 using Microsoft.Practices.ServiceLocation;
+using SecureNotepad.WPF.ViewModels.Services;
 
 namespace SecureNotepad.WPF.ViewModels
 {
@@ -34,16 +24,16 @@ namespace SecureNotepad.WPF.ViewModels
 
             if (ViewModelBase.IsInDesignModeStatic)
             {
-                // SimpleIoc.Default.Register<IDataService, Design.DesignDataService>();
+                SimpleIoc.Default.Register<IDataService, DesignService>();
             }
             else
             {
-                // SimpleIoc.Default.Register<IDataService, DataService>();
+                SimpleIoc.Default.Register<IDataService, DataService>();
             }
 
             SimpleIoc.Default.Register<MainViewModel>();
-            
             SimpleIoc.Default.Register<SettingsViewModel>();
+            SimpleIoc.Default.Register<BrowseWebViewModel>();
         }
 
         public static T GetViewModel<T>() where T : ViewModelBase
@@ -81,6 +71,20 @@ namespace SecureNotepad.WPF.ViewModels
                 RegisterVM<SettingsViewModel>();
 
                 return ServiceLocator.Current.GetInstance<SettingsViewModel>();
+            }
+        }
+
+        /// <summary>
+        /// Gets the BrowseWeb property.
+        /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance",
+            "CA1822:MarkMembersAsStatic",
+            Justification = "This non-static member is needed for data binding purposes.")]
+        public BrowseWebViewModel BrowseWeb
+        {
+            get
+            {
+                return ServiceLocator.Current.GetInstance<BrowseWebViewModel>();
             }
         }
 

@@ -31,8 +31,20 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.Json">
+      <HintPath>..\packages\JsonValue.0.6.0\lib\40\Microsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Net.Http.Formatting">
+      <HintPath>..\packages\HttpClient.0.6.0\lib\40\Microsoft.Net.Http.Formatting.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Server.Common">
+      <HintPath>..\packages\JsonValue.0.6.0\lib\40\Microsoft.Server.Common.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Net.Http">
+      <HintPath>..\packages\HttpClient.0.6.0\lib\40\System.Net.Http.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -44,6 +56,14 @@
     <Compile Include="CryptoExtensions\CryptoType.cs" />
     <Compile Include="CryptoExtensions\RNGExtensions.cs" />
     <Compile Include="CryptoExtensions\RSAExtensions.cs" />
+    <Compile Include="Extensions\NameValueExtensions.cs" />
+    <Compile Include="Extensions\SerializerExtensions.cs" />
+    <Compile Include="Net\OAuth\OAuthToken.cs" />
+    <Compile Include="Net\SkyDrive\BaseItem.cs" />
+    <Compile Include="Net\SkyDrive\FileItem.cs" />
+    <Compile Include="Net\SkyDrive\FolderItem.cs" />
+    <Compile Include="Net\SkyDrive\LiveClient.cs" />
+    <Compile Include="Net\SkyDrive\SkyDriveClient.cs" />
     <Compile Include="UI\DialogResult.cs" />
     <Compile Include="FileManagers\IFileManager.cs" />
     <Compile Include="FileManagers\KeyType.cs" />
@@ -54,7 +74,9 @@
     <Compile Include="UI\SecureFileType.cs" />
     <Compile Include="Settings\IUserSettings.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Linq;
+using System.Text.RegularExpressions;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using SecureNotepad.Core.FileManagers;
+using SecureNotepad.Core.Net.OAuth;
 using SecureNotepad.Core.Settings;
 using SecureNotepad.Core.UI;
-using System.Text.RegularExpressions;
 
 namespace SecureNotepad.WPF.ViewModels
 {
@@ -93,11 +94,36 @@ namespace SecureNotepad.WPF.ViewModels
             }
         }
 
+        /// <summary>
+        /// Sets and gets the WebToken property.
+        /// Changes to that property's value raise the PropertyChanged event. 
+        /// </summary>
+        public OAuthToken WebToken
+        {
+            get
+            {
+                return _userSettings.Token;
+            }
+
+            set
+            {
+                if (_userSettings.Token == value)
+                {
+                    return;
+                }
+
+                _userSettings.Token = value;
+                RaisePropertyChanged(() => WebToken);
+            }
+        }
+
         public RelayCommand OpenCommand { get; private set; }
         public RelayCommand SaveCommand { get; private set; }
         public RelayCommand CloseCommand { get; private set; }
         public RelayCommand SettingsCommand { get; private set; }
         public RelayCommand<String> FindCommand { get; private set; }
+        public RelayCommand OpenWebCommand { get; private set; }
+        public RelayCommand SaveWebCommand { get; private set; }
 
         public MainViewModel()
         {
@@ -106,6 +132,18 @@ namespace SecureNotepad.WPF.ViewModels
             CloseCommand = new RelayCommand(() => SendCloseFileMessage());
             SettingsCommand = new RelayCommand(() => SendSettingsMessage());
             FindCommand = new RelayCommand<String>(k => FindInContents(k));
+            OpenWebCommand = new RelayCommand(() => SendOpenWebMessage());
+            SaveWebCommand = new RelayCommand(() => SendSaveWebMessage());
+        }
+
+        private void SendOpenWebMessage()
+        {
+            MessengerInstance.Send<Boolean>(true, "OpenWebDialog");
+        }
+
+        private void SendSaveWebMessage()
+        {
+            MessengerInstance.Send<Boolean>(true, "SaveWebDialog");
         }
 
         private void FindInContents(string key)

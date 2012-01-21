@@ -8,14 +8,14 @@
     <Setting Name="AESKeyPath" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="RSAKeyPath" Type="System.String" Scope="User">
-      <Value Profile="(Default)" />
-    </Setting>
     <Setting Name="FirstLaunch" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
     <Setting Name="PasswordSalt" Type="System.String" Scope="User">
       <Value Profile="(Default)">c2+PD5PtlaIxZjQsRyGoQg==</Value>
+    </Setting>
+    <Setting Name="LiveToken" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
     </Setting>
   </Settings>
 </SettingsFile>

@@ -44,8 +44,31 @@ namespace SecureNotepad.WPF
             Messenger.Default.Register<Boolean>(this, "ConfirmSave", b => ConfirmClose());
             Messenger.Default.Register<Boolean>(this, "ShowSettings", b => ShowSettingsDialog());
             Messenger.Default.Register<String>(this, "FoundMatch", m => ProcessMatch(m));
+            Messenger.Default.Register<Boolean>(this, "OpenWebDialog", b => ShowOpenWebDialog());
+            Messenger.Default.Register<Boolean>(this, "SaveWebDialog", b => ShowSaveWebDialog());
 
             ProcessCLI();
+        }
+
+        private void ShowOpenWebDialog()
+        {
+            if (_main.WebToken == null || _main.WebToken.IsExpired)
+            {
+                var url = "https://oauth.live.com/authorize?client_id=000000004008412A&scope=wl.signin%20wl.skydrive&response_type=token&redirect_uri=http://defiantcode.com/SecureNotepad/callback.htm";
+                var loginDlg = new LiveLogin(url);
+                loginDlg.ShowDialog();
+                _main.UserSettings.Token = loginDlg.Token;
+                _main.UserSettings.Save();
+            }
+
+            var browseDlg = new BrowseSkyDrive();
+            browseDlg.ShowDialog();
+
+        }
+
+        private void ShowSaveWebDialog()
+        {
+
         }
 
         private void ProcessMatch(string match)
