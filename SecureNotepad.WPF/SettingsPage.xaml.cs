@@ -14,11 +14,14 @@ namespace SecureNotepad.WPF
         private SettingsViewModel _vm;
         public SettingsPage()
         {
+
+
             InitializeComponent();
             Closing += new System.ComponentModel.CancelEventHandler(SettingsPage_Closing);
             _vm = DataContext as SettingsViewModel;
             Messenger.Default.Register<Boolean>(this, "GetPassword", b => GetPassword(b));
             Messenger.Default.Register<Boolean>(this, "SaveComplete", b => Close());
+            
         }
 
         void SettingsPage_Closing(object sender, System.ComponentModel.CancelEventArgs e)

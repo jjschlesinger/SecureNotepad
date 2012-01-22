@@ -9,7 +9,7 @@
             <StackPanel>
                 <StackPanel Orientation="Horizontal" Height="25" Margin="0,5,0,0">
                     <TextBlock Height="18">Path:</TextBlock>
-                    <TextBox Width="316" VerticalAlignment="Top" Name="AESKeyPath" Margin="5,0,0,0" Text="{Binding Path=AESKeyPath}"></TextBox>
+                    <TextBox Width="316" VerticalAlignment="Top" Name="AESKeyPath" Margin="5,0,0,0" Text="{Binding Path=AESKeyPath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
                     <Button Name="AESKeyPathBrowse" Width="25" Height="25" Click="AESKeyPathBrowse_Click">
                         <Image Stretch="Uniform" Source="/SecureNotepad;component/Images/openHS.png" />
                     </Button>

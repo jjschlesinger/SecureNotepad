@@ -142,11 +142,6 @@ namespace SecureNotepad.WPF.ViewModels
 
         private void SaveSettings(string keyPass)
         {
-            if (keyPass == null && !File.Exists(AESKeyPath))
-            {
-                MessengerInstance.Send<Boolean>(true, "GetPassword");
-                return;
-            }
             var saltBytes = new byte[16];
 
             if (String.IsNullOrEmpty(_userSettings.PasswordSalt))
@@ -154,20 +149,29 @@ namespace SecureNotepad.WPF.ViewModels
             else
                 saltBytes = Convert.FromBase64String(_userSettings.PasswordSalt);
 
-            if (!File.Exists(AESKeyPath))
+            if (_userSettings.AESKeyType != Core.FileManagers.KeyType.Password)
             {
-                var k = new byte[32];
+                var keyExists = File.Exists(AESKeyPath);
 
-                if (UseFileKey.HasValue && UseFileKey.Value)
+                if (keyPass == null && !keyExists)
                 {
-                    k = RNGExtensions.GetRandomBytes(32);
-                    if (!String.IsNullOrEmpty(keyPass))
-                        k = k.Encrypt(keyPass.GetKeyFromPassphrase(32, saltBytes));
-
-                    File.WriteAllBytes(AESKeyPath, k);
+                    MessengerInstance.Send<Boolean>(true, "GetPassword");
+                    return;
                 }
 
+                if (!keyExists)
+                {
+                    var k = new byte[32];
 
+                    if (UseFileKey.HasValue && UseFileKey.Value)
+                    {
+                        k = RNGExtensions.GetRandomBytes(32);
+                        if (!String.IsNullOrEmpty(keyPass))
+                            k = k.Encrypt(keyPass.GetKeyFromPassphrase(32, saltBytes));
+
+                        File.WriteAllBytes(AESKeyPath, k);
+                    }
+                }
             }
 
             _userSettings.AESKeyPath = AESKeyPath;
@@ -182,7 +186,7 @@ namespace SecureNotepad.WPF.ViewModels
         {
             _userSettings.Reload();
             SetKeyProperties();
-            
+
             base.Cleanup();
 
             Locator.UnregisterVM<SettingsViewModel>();

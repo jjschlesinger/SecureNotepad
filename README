@@ -1,1 +1,8 @@
-Download latest version from http://defiantcode.com/SecureNotepad/publish.htm
+Install latest version from http://defiantcode.com/SecureNotepad/publish.htm
+
+Version History
+===============
+1/21/12: v1.0.0.0
+- Initial beta release. Missing error handling so he application crashes on failed encrypt/decrpt and various other things
+1/21/12: v1.0.0.1
+- Added ctrl+f shortcut to find

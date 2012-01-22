@@ -21,6 +21,13 @@ namespace SecureNotepad.WPF
 
         public MainWindow()
         {
+            Messenger.Default.Register<DialogResult>(this, "OpenFile", dlg => ShowFileDialog(new OpenFileDialog(), dlg));
+            Messenger.Default.Register<DialogResult>(this, "SaveFile", dlg => ShowFileDialog(new SaveFileDialog(), dlg));
+            Messenger.Default.Register<DialogResult>(this, "GetPassword", dlg => ShowPasswordDialog(dlg));
+            Messenger.Default.Register<Boolean>(this, "ConfirmSave", b => ConfirmClose());
+            Messenger.Default.Register<Boolean>(this, "ShowSettings", b => ShowSettingsDialog());
+            Messenger.Default.Register<String>(this, "FoundMatch", m => ProcessMatch(m));
+
             InitializeComponent();
 
             Loaded += new RoutedEventHandler(MainWindow_Loaded);
@@ -29,7 +36,7 @@ namespace SecureNotepad.WPF
         void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
             _main = (MainViewModel)DataContext;
-            _main.UserSettings = new UserSettings();
+            InitUserSettings();
 
             if (_main.UserSettings.FirstLaunch)
             {
@@ -68,7 +75,13 @@ namespace SecureNotepad.WPF
 
         private void ShowSaveWebDialog()
         {
+        }
 
+        private void InitUserSettings()
+        {
+            var u = new UserSettings();
+            Locator.GetViewModel<MainViewModel>().UserSettings = u;
+            Locator.GetViewModel<SettingsViewModel>().UserSettings = u;
         }
 
         private void ProcessMatch(string match)
@@ -208,5 +221,9 @@ namespace SecureNotepad.WPF
             _main.PositionInContents = NoteBody.SelectionStart;
         }
 
+        private void FindCommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            _main.FindCommand.Execute(SearchBox.Text);
+        }
     }
 }

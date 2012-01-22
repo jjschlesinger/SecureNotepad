@@ -6,6 +6,7 @@
         <CommandBinding Command="ApplicationCommands.Save" Executed="SaveCommandBinding_Executed" />
         <CommandBinding Command="ApplicationCommands.Open" Executed="OpenCommandBinding_Executed" />
         <CommandBinding Command="ApplicationCommands.New" Executed="NewCommandBinding_Executed" />
+        <CommandBinding Command="ApplicationCommands.Find" Executed="FindCommandBinding_Executed" />
     </Window.CommandBindings>
     <DockPanel>
         <ToolBarTray DockPanel.Dock="Top">
@@ -22,8 +23,8 @@
                 <Button Name="Settings" BorderThickness="0" ToolTip="Settings" Command="{Binding Path=SettingsCommand}">
                     <Image Width="32" Height="32" Stretch="Fill" Source="/SecureNotepad;component/Images/Gear.png" />
                 </Button>
-                <TextBox Name="SearchBox" Width="200" />
-                <Button BorderThickness="0" ToolTip="New (Ctrl + N)" Command="{Binding Path=FindCommand}" CommandParameter="{Binding ElementName=SearchBox, Path=Text}">
+                <TextBox Name="SearchBox" Width="175" BorderBrush="#FFA0A0A0" Margin="25,0,0,0" />
+                <Button BorderThickness="0" ToolTip="Find (Ctrl + F)" Command="{Binding Path=FindCommand}" CommandParameter="{Binding ElementName=SearchBox, Path=Text}">
                     <Image Width="32" Height="32" Stretch="Fill" Source="/SecureNotepad;component/Images/search.ico" Opacity="1" OverridesDefaultStyle="False" OpacityMask="{x:Null}"></Image>
                 </Button>
             </ToolBar>
