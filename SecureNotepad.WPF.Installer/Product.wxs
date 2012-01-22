@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+	<Product Id="b02d7f2d-2d8c-425c-9cfd-324dda3fc3b6" Name="SecureNotepad.WPF.Installer" Language="1033" Version="1.0.0.0" Manufacturer="SecureNotepad.WPF.Installer" UpgradeCode="daf97b1c-c757-439a-a138-c7cb00af77a2">
+		<Package InstallerVersion="200" Compressed="yes" />
+
+		<Media Id="1" Cabinet="media1.cab" EmbedCab="yes" />
+
+		<Directory Id="TARGETDIR" Name="SourceDir">
+			<Directory Id="ProgramFilesFolder">
+				<Directory Id="INSTALLLOCATION" Name="SecureNotepad.WPF.Installer">
+					<!-- TODO: Remove the comments around this Component element and the ComponentRef below in order to add resources to this installer. -->
+					 <Component Id="ProductComponent" Guid="57ab8bb3-7080-4ce2-bcb3-4b54c1cf0e82">
+             <File Id="SecureNotepadWPF" Name="$(var.SecureNotepad.WPF.TargetFileName)" Source="$(var.SecureNotepad.WPF.TargetPath)" DiskId="1" KeyPath="yes" />
+             <File Id="SecureNotepadCore" Name="$(var.SecureNotepad.Core.TargetFileName)" Source="$(var.SecureNotepad.Core.TargetPath)" DiskId="1" />
+             <File Id="SecureNotepadVM" Name="$(var.SecureNotepad.WPF.ViewModels.TargetFileName)" Source="$(var.SecureNotepad.WPF.ViewModels.TargetPath)" DiskId="1" />
+             <File Id="SecureNotepadConfig" Name="$(var.SecureNotepad.WPF.TargetFileName).config" Source="$(var.SecureNotepad.WPF.TargetPath).config" DiskId="1" />
+           </Component>
+
+          <Component Id="ThirdPartyComponent" Guid="06827343-1AD0-435C-A451-2B9816562B07">
+            <File Id="MVVMLight" Name="GalaSoft.MvvmLight.WPF4.dll" Source="$(var.SecureNotepad.WPF.TargetDir)GalaSoft.MvvmLight.WPF4.dll" DiskId="1" />
+            <File Id="MVVMLightExtras" Name="GalaSoft.MvvmLight.Extras.WPF4.dll" Source="$(var.SecureNotepad.WPF.TargetDir)GalaSoft.MvvmLight.Extras.WPF4.dll" DiskId="1" />
+            <File Id="MSJSON" Name="Microsoft.Json.dll" Source="$(var.SecureNotepad.WPF.TargetDir)Microsoft.Json.dll" DiskId="1" />
+            <File Id="ServiceLocation" Name="Microsoft.Practices.ServiceLocation.dll" Source="$(var.SecureNotepad.WPF.TargetDir)Microsoft.Practices.ServiceLocation.dll" DiskId="1" />
+            <File Id="ServerCommon" Name="Microsoft.Server.Common.dll" Source="$(var.SecureNotepad.WPF.ViewModels.TargetDir)Microsoft.Server.Common.dll" DiskId="1" />
+            <File Id="SystemNetHttp" Name="System.Net.Http.dll" Source="$(var.SecureNotepad.WPF.TargetDir)System.Net.Http.dll" DiskId="1" />
+            <File Id="SysWiInt" Name="System.Windows.Interactivity.dll" Source="$(var.SecureNotepad.WPF.TargetDir)System.Windows.Interactivity.dll" DiskId="1" />
+          </Component>
+				</Directory>
+			</Directory>
+		</Directory>
+
+		<Feature Id="ProductFeature" Title="SecureNotepad.WPF.Installer" Level="1">
+			<!-- TODO: Remove the comments around this ComponentRef element and the Component above in order to add resources to this installer. -->
+			 <ComponentRef Id="ProductComponent" />
+      <ComponentRef Id="ThirdPartyComponent" />
+
+      <!-- Note: The following ComponentGroupRef is required to pull in generated authoring from project references. -->
+			<ComponentGroupRef Id="Product.Generated" />
+		</Feature>
+	</Product>
+</Wix>
