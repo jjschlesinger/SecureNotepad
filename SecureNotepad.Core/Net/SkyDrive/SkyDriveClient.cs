@@ -11,7 +11,7 @@ namespace SecureNotepad.Core.Net.SkyDrive
 
         public SkyDriveClient(string accessToken) : base(accessToken)
         {
-        	
+            MaxResponseContentBufferSize = 100000;
         }
 
         public void GetFolderItemsAsync(Action<IEnumerable<BaseItem>> callback, string folderId = null)
@@ -58,7 +58,7 @@ namespace SecureNotepad.Core.Net.SkyDrive
 
                 callback(items);
 
-            }, path, "GET");
+            }, path, "GET", new Dictionary<string,string>{{ "limit","25" }});
         }
     }
 }

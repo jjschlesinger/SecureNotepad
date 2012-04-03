@@ -1,8 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
-using SecureNotepad.Core.Net.OAuth;
 
 namespace SecureNotepad.Core.Net.SkyDrive
 {
@@ -23,9 +23,10 @@ namespace SecureNotepad.Core.Net.SkyDrive
             AccessToken = accessToken;
         }
 
-        public void Execute(Action<Task<String>> resultCallback, string path, string httpMethod, string contentType = null)
+        public void Execute(Action<Task<String>> resultCallback, string path, string httpMethod, Dictionary<String, String> optionalParams = null, string contentType = null)
         {
-            path = BuildPath(path);
+            
+            path = BuildPath(path, optionalParams);
             Task<String> t;
 
             switch (httpMethod)
@@ -38,9 +39,18 @@ namespace SecureNotepad.Core.Net.SkyDrive
             t.ContinueWith(resultCallback);            
         }
 
-        private string BuildPath(string path)
+        private string BuildPath(string path, Dictionary<String, String> optionalParams)
         {
-            return API_VERSION + path + "?access_token=" + AccessToken;
+            var fullPath = API_VERSION + path + "?access_token=" + AccessToken;
+            if(optionalParams != null)
+            {
+                foreach (var k in optionalParams.Keys)
+                {
+                    fullPath += "&" + k + "=" + optionalParams[k];
+                }
+            }
+
+            return fullPath;
         }
 
     }

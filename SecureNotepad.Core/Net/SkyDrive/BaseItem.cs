@@ -8,7 +8,7 @@ namespace SecureNotepad.Core.Net.SkyDrive
         public string Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
-        public string ParentId { get; set; }
+        public FolderItem Parent { get; set; }
         public string Type { get; protected set; }
         public DateTime? Created { get; set; }
         public DateTime? Updated { get; set; }
